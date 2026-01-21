@@ -23,7 +23,7 @@ def get_commands(db: Session = Depends(get_db)):
 
 
 @command_router.post("/", response_model=CommandSingleResponse)
-def create_command(payload: CommandRequest):
+def create_command(payload: CommandRequest, db: Session = Depends(get_db)):
     """
     Creates an item with the given payload in the database and returns this payload after pulling it from the database 
 
@@ -31,7 +31,11 @@ def create_command(payload: CommandRequest):
     :return: returns a json object with field of "data" under which there is the payload now pulled from the database 
     """
     # TODO:(Member) Implement this endpoint
-                      
+    new_cmd = Command(**payload.model_dump())
+    db.add(new_cmd)
+    db.commit()
+    db.refresh(new_cmd)
+    return {"data": new_cmd}
 
 
 @command_router.delete("/{id}", response_model=CommandListResponse)
