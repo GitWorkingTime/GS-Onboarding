@@ -52,7 +52,11 @@ class MainCommand(BaseSQLModel, table=True):
             if (lenParams == lenFormat):
                 return self
             else:
-                raise ValueError
+                if (lenParams == 0 and lenFormat != 0):
+                    raise ValueError("Parameter has 0 values (i.e Parameter has a value of 'None') but Format has more than 0 values, i.e:\nParameter == None and Format != None")
+                elif (lenParams != 0 and lenFormat != 0):
+                    raise ValueError("Format has 0 values (i.e Format has a value of 'None') but Parameter has more than 0 values, i.e:\nParameter != None and Format == None")
+
 
 class Command(BaseSQLModel, table=True):
     """
