@@ -37,20 +37,21 @@ class MainCommand(BaseSQLModel, table=True):
         # Copy params and format
         params = self.params
         format = self.format
-
-        # Case 1: Both args are of 'None' value
         if (params == None and format == None):
-            return self
+           return self
+        else:
+            lenParams = 0
+            lenFormat = 0
+            if (params != None):
+                lenParams = len(params.split(','))
         
-        # Case 2: Both args have same number of values
-        else:            
-            splitParams = params.split(",")
-            splitFormat = format.split(",")
-            if (len(splitParams) == len(splitFormat)):
-                return self
-            else:
-                return ValueError
+            if (format != None):
+                lenFormat = len(format.split(','))
 
+            if (lenParams == lenFormat):
+                return self
+
+        raise ValueError
 
 class Command(BaseSQLModel, table=True):
     """

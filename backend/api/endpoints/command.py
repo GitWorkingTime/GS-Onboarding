@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
 from backend.api.models.request_model import CommandRequest
@@ -31,15 +31,19 @@ def create_command(payload: CommandRequest, db: Session = Depends(get_db)):
     :return: returns a json object with field of "data" under which there is the payload now pulled from the database 
     """
     # TODO:(Member) Implement this endpoint
+    # Create Cmd
     new_cmd = Command(**payload.model_dump())
+
+    # Add into database
     db.add(new_cmd)
     db.commit()
     db.refresh(new_cmd)
+
     return {"data": new_cmd}
 
 
 @command_router.delete("/{id}", response_model=CommandListResponse)
-def delete_command(id: int):
+def delete_command(id: int, db: Session = Depends(get_db)):
     """
     Deletes the item with the given id if it exists. Otherwise raises a 404 error.
 
@@ -47,3 +51,14 @@ def delete_command(id: int):
     :return: returns the list of commands after deleting the item
     """
     # TODO:(Member) Implement this endpoint
+    query = select(Command).where(Command.id == id)
+    items = db.exec(query).all()
+    if not items:
+        raise HTTPException(status_code=404, detail="Item Not Found")
+    else:
+        for item in items:
+            db.delete(item)
+            db.commit()
+        
+        return items
+
