@@ -37,6 +37,7 @@ class MainCommand(BaseSQLModel, table=True):
         # Copy params and format
         params = self.params
         format = self.format
+
         if (params == None and format == None):
            return self
         else:
@@ -50,8 +51,8 @@ class MainCommand(BaseSQLModel, table=True):
 
             if (lenParams == lenFormat):
                 return self
-
-        raise ValueError
+            else:
+                raise ValueError
 
 class Command(BaseSQLModel, table=True):
     """
