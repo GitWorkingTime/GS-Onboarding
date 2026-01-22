@@ -3,6 +3,9 @@ from typing import Any
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
+from backend.utils.logging import logger
+import time
+import datetime
 
 class LoggerMiddleware(BaseHTTPMiddleware):
     async def dispatch(
@@ -18,5 +21,14 @@ class LoggerMiddleware(BaseHTTPMiddleware):
         :return: Response from endpoint
         """
         # TODO:(Member) Finish implementing this method
+        start_time = time.time()
+        request_datetime = datetime.datetime.now().isoformat()
+        logger.info(f"\nIncoming Request Metadata | Method-{request.method} : URL-{request.url}")
         response = await call_next(request)
+
+        duration = (time.time() - start_time)*1000
+        logger.info(
+            f"\nProcessed | Request Datetime {request_datetime} : Duration {duration} : Params {request.path_params}"
+        )
+
         return response

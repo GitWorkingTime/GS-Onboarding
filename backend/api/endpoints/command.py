@@ -59,6 +59,11 @@ def delete_command(id: int, db: Session = Depends(get_db)):
         for item in items:
             db.delete(item)
             db.commit()
-        
-        return items
+    
+    remaining_query = select(Command)
+    remaining_items = db.exec(remaining_query).all()
+    return {"data":remaining_items}
+
+
+
 
